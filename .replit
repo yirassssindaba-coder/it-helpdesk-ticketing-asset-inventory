@@ -1,0 +1,61 @@
+run = "tsx index.ts"
+entrypoint = "index.ts"
+hidden = [".config", "package-lock.json", "tsconfig.json"]
+modules = ["nodejs-20", "web"]
+
+[nix]
+channel = "stable-25_05"
+
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix", ".config"]
+
+[deployment]
+run = ["tsx", "index.ts"]
+deploymentTarget = "static"
+ignorePorts = false
+build = ["npm", "run", "build"]
+publicDir = "dist"
+
+[[ports]]
+localPort = 3000
+externalPort = 80
+
+[[ports]]
+localPort = 3001
+externalPort = 3001
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 5002
+externalPort = 3003
+
+[agent]
+expertMode = true
+stack = "BEST_EFFORT_FALLBACK"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 5000
